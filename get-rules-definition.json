@@ -1,0 +1,14 @@
+{
+  "entity": "SystemRule",
+  "columns": [
+    {
+      "name": "id",
+      "colNum": 11,
+      "display": true,
+      "colWidth": 200,
+      "friendlyName": "ID",
+      "columnType": "Property",
+      "definition": "id"
+    }
+  ]
+}
