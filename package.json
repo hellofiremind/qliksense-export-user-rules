@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/hellofiremind/qliksense-export-user-rules#readme",
   "dependencies": {
-    "qrs-interact": "^3.0.1"
+    "randomstring": "^1.1.5",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "snazzy": "^8.0.0",

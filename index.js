@@ -1,32 +1,65 @@
-const config = require('./config.json')
+const request = require('request')
+const rs = require('randomstring')
 const getRulesDef = require('./get-rules-definition.json')
-const QRSInteract = require('qrs-interact')
 
-const qrs = new QRSInteract(config)
+const generateXRFKey = () => rs.generate({
+  length: 16,
+  charset: 'alphanumeric'
+})
 
-qrs.Post('systemrule/table?filter=((category+eq+%27Security%27))&orderAscending=true&skip=0&sortColumn=name', getRulesDef, 'json')
-  .then((result) => {
-    console.log(result)
-    const items = result.body.rows.map((objectID) => ({
-      objectID,
-      type: 'SystemRule'
-    }))
+const getParams = (qs) => {
+  const xrfKey = generateXRFKey()
 
-    qrs
-      .Post('selection', { items }, 'json')
-      .then((result) => {
-        const selectionId = result.body.id
+  return {
+    headers: {
+      'X-Qlik-Xrfkey': xrfKey,
+      userid: process.env.USERID
+    },
+    qs: {
+      ...qs,
+      xrfKey
+    }
+  }
+}
 
-        qrs
-          .Get(`selection/${selectionId}/systemrule/full`)
-          .then((result) => {
-            const rules = result.body
+const r = request.defaults({
+  ...getParams(),
+  baseUrl: process.env.HOST
+})
 
-            qrs
-              .Delete(`selection/${selectionId}`)
-              .then(() => {
-                console.log(rules)
-              })
-          })
+r.post({
+  url: '/systemrule/table',
+  qs: {
+    filter: '((category+eq+%27Security%27))',
+    orderAscending: true,
+    skip: 0,
+    sortColumn: 'name'
+  },
+  json: getRulesDef
+}, (error, response, body) => {
+  console.log(error, body)
+
+  const items = body.rows.map((objectID) => ({
+    objectID,
+    type: 'SystemRule'
+  }))
+
+  r.post({
+    url: '/selection',
+    json: { items }
+  }, (error, response, body) => {
+    console.log(error, body)
+
+    const selectionId = body.id
+
+    r.get(`/selection/${selectionId}/systemrule/full`, (error, response, body) => {
+      console.log(error, body)
+
+      const rules = body
+
+      r.delete(`/selection/${selectionId}`, (error, response, body) => {
+        console.log(error, body, rules)
       })
+    })
   })
+})
