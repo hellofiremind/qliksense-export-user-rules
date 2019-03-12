@@ -45,6 +45,8 @@ r.post({
     type: 'SystemRule'
   }))
 
+  console.log(items)
+
   r.post({
     url: '/selection',
     json: { items }
