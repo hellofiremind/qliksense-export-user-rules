@@ -38,9 +38,9 @@ r.post({
   },
   json: getRulesDef
 }, (error, response, body) => {
-  console.log(error, body, body.rows, body.rows[0])
+  console.log(error, body)
 
-  const items = body.rows[0].map(([ objectID ]) => ({
+  const items = body.rows.map(([ objectID ]) => ({
     objectID,
     type: 'SystemRule'
   }))
