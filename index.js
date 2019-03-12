@@ -40,7 +40,7 @@ r.post({
 }, (error, response, body) => {
   console.log(error, body)
 
-  const items = body.rows.map((objectID) => ({
+  const items = body.rows[0].map(([ objectID ]) => ({
     objectID,
     type: 'SystemRule'
   }))
