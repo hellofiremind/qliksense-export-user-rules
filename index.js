@@ -30,9 +30,10 @@ const r = request.defaults({
 r.post({
   url: '/systemrule/table',
   qs: {
-    filter: '((category+eq+%27Security%27))',
+    filter: `((type eq 'Custom') and (category eq Security'))`,
     orderAscending: true,
     skip: 0,
+    take: 200,
     sortColumn: 'name'
   },
   json: getRulesDef
