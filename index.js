@@ -38,7 +38,7 @@ r.post({
   },
   json: getRulesDef
 }, (error, response, body) => {
-  console.log(error, body)
+  console.log(error, body, body.rows, body.rows[0])
 
   const items = body.rows[0].map(([ objectID ]) => ({
     objectID,
