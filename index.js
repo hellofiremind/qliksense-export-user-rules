@@ -1,3 +1,4 @@
+const fs = require('fs')
 const request = require('request')
 const rs = require('randomstring')
 const getRulesDef = require('./get-rules-definition.json')
@@ -38,31 +39,36 @@ r.post({
   },
   json: getRulesDef
 }, (error, response, body) => {
-  console.log(error, body)
+  if (error) {
+    console.log(error)
+    process.exit(1)
+  }
 
   const items = body.rows.map(([ objectID ]) => ({
     objectID,
     type: 'SystemRule'
   }))
 
-  console.log(items)
-
   r.post({
     url: '/selection',
     json: { items }
   }, (error, response, body) => {
-    console.log(error, body)
+    if (error) {
+      console.log(error)
+      process.exit(1)
+    }
 
     const selectionId = body.id
 
     r.get(`/selection/${selectionId}/systemrule/full`, (error, response, body) => {
-      console.log(error, body)
+      if (error) {
+        console.log(error)
+        process.exit(1)
+      }
 
       const rules = body
 
-      r.delete(`/selection/${selectionId}`, (error, response, body) => {
-        console.log(error, body, rules)
-      })
+      r.delete(`/selection/${selectionId}`, () => fs.writeFileSync('rules.json', rules))
     })
   })
 })
