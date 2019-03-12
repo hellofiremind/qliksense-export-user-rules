@@ -30,7 +30,7 @@ const r = request.defaults({
 r.post({
   url: '/systemrule/table',
   qs: {
-    filter: `((type eq 'Custom') and (category eq Security'))`,
+    filter: `((type eq 'Custom') and (category eq 'Security'))`,
     orderAscending: true,
     skip: 0,
     take: 200,
